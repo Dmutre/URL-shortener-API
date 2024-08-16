@@ -6,11 +6,13 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiTags,
 } from '@nestjs/swagger';
 import { ShortenResponse } from './response/shorten.response';
 import { Request, Response } from 'express';
 import { StatShortcodeResponse } from './response/stat-shortcode.response';
 
+@ApiTags('Shorten')
 @Controller('shorten')
 export class ShortenController {
   constructor(private readonly shortenService: ShortenService) {}
