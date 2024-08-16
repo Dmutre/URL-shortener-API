@@ -61,9 +61,9 @@ export class ShortenService {
 
   async getOriginalUrl(shortcode: string): Promise<string> {
     const redisUrl = await this.cacheManager.get<string>(shortcode);
-    if (!redisUrl) return redisUrl;
+    if (redisUrl) return redisUrl;
 
-    const shortcodeDb = await this.shortcodeRepo.fingOrThrow({
+    const shortcodeDb = await this.shortcodeRepo.findOrThrow({
       shortCode: shortcode,
     });
 
@@ -74,7 +74,7 @@ export class ShortenService {
   }
 
   private async increaseHitCount(shortcodeId) {
-    const metric = await this.shortcodeMetricRepo.fingOrThrow({
+    const metric = await this.shortcodeMetricRepo.findOrThrow({
       shortCodeId: shortcodeId,
     });
     await this.shortcodeMetricRepo.findOneAndUpdate(
@@ -84,7 +84,7 @@ export class ShortenService {
   }
 
   async getShortcodeStats(shortcode: string): Promise<StatShortcodeResponse> {
-    const shortcodeDb = await this.shortcodeRepo.fingOrThrow({
+    const shortcodeDb = await this.shortcodeRepo.findOrThrow({
       shortCode: shortcode,
     });
     const metricDb = await this.shortcodeMetricRepo.findOne({

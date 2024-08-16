@@ -3,6 +3,7 @@ import { CACHE_MANAGER, CacheModule, Cache } from '@nestjs/cache-manager';
 import { ShortenService } from './shorten.service';
 import { ShortcodeRepository } from '../database/repos/shortcode.repo';
 import { ShortcodeMetricRepository } from '../database/repos/shortcode-metric.repo';
+import { NotFoundException } from '@nestjs/common';
 
 describe('ShortenService', () => {
   let service: ShortenService;
@@ -18,7 +19,11 @@ describe('ShortenService', () => {
       originalUrl: mockUrl1,
     }),
     findOne: jest.fn(),
-    fingOrThrow: jest.fn(),
+    findOrThrow: jest.fn().mockResolvedValue({
+      _id: '1',
+      shortCode: mockShortcode1,
+      originalUrl: mockUrl1,
+    }),
   };
 
   const mockShortcodeMetricRepo = {
@@ -27,9 +32,17 @@ describe('ShortenService', () => {
       shortCodeId: '1',
       hitCount: 0,
     }),
-    findOne: jest.fn(),
+    findOne: jest.fn().mockResolvedValue({
+      _id: '33',
+      shortCodeId: '1',
+      hitCount: 0,
+    }),
     findOneAndUpdate: jest.fn(),
-    fingOrThrow: jest.fn(),
+    findOrThrow: jest.fn().mockResolvedValue({
+      _id: '33',
+      shortCodeId: '1',
+      hitCount: 0,
+    }),
   };
 
   const mockCacheManager = {
@@ -78,5 +91,67 @@ describe('ShortenService', () => {
     );
     expect(mockShortcodeMetricRepo.create).toHaveBeenCalled();
     expect(cacheManager.set).toHaveBeenCalledWith(mockShortcode1, mockUrl1);
+  });
+
+  describe('getOriginalUrl', () => {
+    it('should retrieve the original URL from cache if available', async () => {
+      const shortCode = 'ABCDE1';
+      const originalUrl = 'http://example.com';
+      mockCacheManager.get.mockResolvedValue(originalUrl);
+
+      const result = await service.getOriginalUrl(shortCode);
+      expect(result).toEqual(originalUrl);
+      expect(mockCacheManager.get).toHaveBeenCalledWith(shortCode);
+    });
+
+    it('should retrieve the original URL from DB if not in cache', async () => {
+      const shortCode = 'ABCDE1';
+      const originalUrl = 'http://example.com';
+      mockCacheManager.get.mockResolvedValue(null);
+      mockShortcodeRepo.findOrThrow.mockResolvedValue({
+        shortCode,
+        originalUrl,
+      });
+
+      const result = await service.getOriginalUrl(shortCode);
+      expect(result).toEqual(originalUrl);
+      expect(mockShortcodeRepo.findOrThrow).toHaveBeenCalledWith({ shortCode });
+      expect(mockCacheManager.set).toHaveBeenCalledWith(shortCode, originalUrl);
+    });
+  });
+
+  describe('getShortcodeStats', () => {
+    it('should return stats for a shortcode', async () => {
+      const shortCode = 'ABCDE1';
+      const originalUrl = 'http://example.com';
+      const hitCount = 10;
+      mockShortcodeRepo.findOrThrow.mockResolvedValue({
+        shortCode,
+        originalUrl,
+      });
+      mockShortcodeMetricRepo.findOne.mockResolvedValue({
+        hitCount,
+      });
+
+      const result = await service.getShortcodeStats(shortCode);
+      expect(result).toEqual({
+        shortcode: shortCode,
+        url: originalUrl,
+        hitScore: hitCount,
+      });
+    });
+  });
+
+  describe('error handling', () => {
+    it('should throw NotFoundException if shortcode not found', async () => {
+      const shortCode = 'unknown';
+      jest
+        .spyOn(service, 'getOriginalUrl')
+        .mockRejectedValueOnce(new NotFoundException('Document was not found'));
+
+      await expect(service.getOriginalUrl(shortCode)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
   });
 });
