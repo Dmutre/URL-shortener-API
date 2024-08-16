@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
-import { AbstractDocument } from 'src/utils/database/abstract.schema';
+import { AbstractDocument } from '../../utils/database/abstract.schema';
 
 @Schema({ versionKey: false, timestamps: true })
 export class ShortCodeMetric extends AbstractDocument {

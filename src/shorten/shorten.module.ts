@@ -5,13 +5,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   ShortCode,
   ShortCodeSchema,
-} from 'src/database/models/shortcode.schema';
+} from '../database/models/shortcode.schema';
 import {
   ShortCodeMetric,
   ShortCodeMetricSchema,
-} from 'src/database/models/metrics.schema';
-import { ShortcodeRepository } from 'src/database/repos/shortcode.repo';
-import { ShortcodeMetricRepository } from 'src/database/repos/shortcode-metric.repo';
+} from '../database/models/metrics.schema';
+import { ShortcodeRepository } from '../database/repos/shortcode.repo';
+import { ShortcodeMetricRepository } from '../database/repos/shortcode-metric.repo';
 
 @Module({
   imports: [

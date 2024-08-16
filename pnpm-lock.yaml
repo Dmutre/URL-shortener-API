@@ -44,6 +44,9 @@ importers:
       class-validator:
         specifier: ^0.14.1
         version: 0.14.1
+      jest-mock:
+        specifier: ^29.7.0
+        version: 29.7.0
       joi:
         specifier: ^17.13.3
         version: 17.13.3

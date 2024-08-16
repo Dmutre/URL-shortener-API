@@ -1,8 +1,8 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
-import { ShortcodeMetricRepository } from 'src/database/repos/shortcode-metric.repo';
-import { ShortcodeRepository } from 'src/database/repos/shortcode.repo';
+import { ShortcodeMetricRepository } from '../database/repos/shortcode-metric.repo';
+import { ShortcodeRepository } from '../database/repos/shortcode.repo';
 import { StatShortcodeResponse } from './response/stat-shortcode.response';
 
 @Injectable()
