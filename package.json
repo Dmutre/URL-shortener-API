@@ -1,6 +1,7 @@
 {
   "name": "URL-shortener-API",
   "version": "0.0.1",
+  "main": "dist/main.js",
   "description": "",
   "author": "",
   "private": true,
