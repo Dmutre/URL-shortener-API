@@ -36,5 +36,5 @@ jobs:
           --runtime=nodejs20 \
           --trigger-http \
           --allow-unauthenticated \
-          --set-env-vars "RATE_LIMIT_TTL=60,MONGODB_URL=${{ secrets.MONGO_URL }},REDIS_HOST=${{ secrets.REDIS_HOST }},REDIS_PORT=6379,CACHE_TTL=1800000,RATE_LIMIT_TTL=80000,RATE_LIMIT=100"
+          --set-env-vars "RATE_LIMIT_TTL=60,MONGODB_URL=${{ secrets.MONGODB_URL }},REDIS_HOST=${{ secrets.REDIS_HOST }},REDIS_PORT=6379,CACHE_TTL=1800000,RATE_LIMIT_TTL=80000,RATE_LIMIT=100"
 
