@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const configService = await app.get(ConfigService);
-  const PORT = configService.get<string>('port');
+  const PORT = configService.get<string>('port') || 8080;
 
   const options = new DocumentBuilder()
     .setTitle('URL Shortener API docs')
@@ -26,7 +26,7 @@ async function bootstrap() {
   );
 
   await app
-    .listen(PORT)
+    .listen(PORT, '0.0.0.0')
     .then(async () =>
       console.log(`Application is running on: ${await app.getUrl()}`),
     );

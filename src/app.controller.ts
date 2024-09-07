@@ -5,7 +5,7 @@ import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 export class AppController {
   @ApiOperation({ summary: 'Health check endpoint' })
   @ApiOkResponse({ type: String })
-  @Get('/health')
+  @Get()
   getHello(): string {
     return 'Server is working';
   }
