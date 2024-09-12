@@ -4,9 +4,14 @@ import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import * as express from 'express';
+import { Handler } from 'express';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+const server = express();
+
+export const nestFunction: Handler = async (req, res) => {
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
 
   const configService = await app.get(ConfigService);
   const PORT = configService.get<string>('port') || 8080;
@@ -25,10 +30,7 @@ async function bootstrap() {
     }),
   );
 
-  await app
-    .listen(PORT, '0.0.0.0')
-    .then(async () =>
-      console.log(`Application is running on: ${await app.getUrl()}`),
-    );
-}
-bootstrap();
+  await app.init();
+  console.log(`Server initialized on port: ${PORT}`);
+  server(req, res);
+};
